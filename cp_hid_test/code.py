@@ -16,8 +16,6 @@ button.pull = digitalio.Pull.UP
 # Wait for USB to initialize
 time.sleep(2)
 
-print("HID Keyboard test started - Press button on GP15 to type 'A'")
-
 while True:
     if not button.value:  # Button is pressed (pin is low)
         keyboard.press(Keycode.SHIFT)
