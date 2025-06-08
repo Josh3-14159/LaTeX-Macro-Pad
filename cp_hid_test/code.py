@@ -20,7 +20,7 @@ print("HID Keyboard test started - Press button on GP15 to type 'A'")
 
 while True:
     if not button.value:  # Button is pressed (pin is low)
-        keyboard.press(Keycode.A)
-        keyboard.release(Keycode.A)
+        keyboard.press(Keycode.SHIFT)
+        keyboard.release(Keycode.SHIFT)
         time.sleep(0.1)  # Small delay to prevent multiple triggers
     time.sleep(0.01)  # Small delay to prevent CPU hogging
