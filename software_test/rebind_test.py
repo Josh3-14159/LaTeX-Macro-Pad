@@ -1,36 +1,25 @@
 import keyboard
 import time
 
-# Track the state of left ctrl
-left_ctrl_pressed = False
-
 def on_key_event(event):
-    global left_ctrl_pressed
+    # If it's a left shift key event, suppress it completely
+    if event.name == 'left shift':
+        return False
     
-    # Handle left ctrl key events
-    if event.name == 'left ctrl':
-        if event.event_type == keyboard.KEY_DOWN:
-            left_ctrl_pressed = True
-        elif event.event_type == keyboard.KEY_UP:
-            left_ctrl_pressed = False
-        return False  # Suppress ctrl key
-    
-    # If left ctrl is held and a key is pressed
-    if left_ctrl_pressed and event.event_type == keyboard.KEY_DOWN:
-        # Ignore if it's a modifier key
-        if event.name in {'left ctrl', 'right ctrl', 'left shift', 'right shift', 'left alt', 'right alt', 'caps lock'}:
-            return True
+    # If it's a key press and left shift is being held
+    if keyboard.is_pressed('left shift') and event.event_type == keyboard.KEY_DOWN:
+        # Ignore if the key pressed is shift itself
+        if event.name == 'shift':
+            return False
             
-        # Get the actual key being pressed
-        key = event.name
-        print(f"Detected key press with ctrl: {key}")  # Debug print
-        
-        # Suppress the original key
+        # First suppress the key completely
         keyboard.send('backspace')
-        # Write the LaTeX command
-        keyboard.write('\\mathcal{' + key.upper() + '}')
-        return False  # Suppress the original key
-    
+        # Check if left shift or caps lock is pressed
+
+        keyboard.write('\mathcal{'+f"{event.name.upper()}"+'}')
+        # Return False to suppress the original key event
+        return False
+
     return True
 
 print("Setting up keyboard hook...")
@@ -39,7 +28,8 @@ keyboard.unhook_all()
 # Add our new hook
 keyboard.hook(on_key_event)
 
-print("Program is running. Left ctrl + key will type \\mathcal{KEY}.")
+print("Program is running. Left shift + key will wrap in brackets.")
+print("If left shift or caps lock is pressed, the letter will be UPPERCASE.")
 print("Press Ctrl+C to exit.")
 try:
     while True:
@@ -47,3 +37,5 @@ try:
 except KeyboardInterrupt:
     print("\nExiting program...")
     keyboard.unhook_all()
+
+    
